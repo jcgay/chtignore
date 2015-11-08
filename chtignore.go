@@ -21,12 +21,15 @@ func process(args []string, output io.Writer) {
 		missingArgument()
 	}
 
-	candidate := args[0]
-	if candidate == "" {
-		missingArgument()
-	}
+	for _, candidate := range args {
+		candidate = upperFirstChar(candidate)
+		content := tryGetTemplate(candidate)
 
-	fmt.Fprint(output, tryGetTemplate(upperFirstChar(candidate)))
+		if content != "" {
+			fmt.Fprintf(output, "# %s\n", candidate)
+			fmt.Fprintln(output, content)
+		}
+	}
 }
 
 func tryGetTemplate(template string) string {
