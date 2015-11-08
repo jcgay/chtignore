@@ -19,3 +19,18 @@ func TestGetUniqueTemplate(t *testing.T) {
 
 	assert.ThatString(output.String()).IsEqualTo("*.class")
 }
+
+func TestGetUniqueGlobalTemplate(t *testing.T) {
+	assert := assert.New(t)
+	output := new(bytes.Buffer)
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Vagrant.gitignore",
+		httpmock.NewStringResponder(404, "Not Found"))
+	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Global/Vagrant.gitignore",
+		httpmock.NewStringResponder(200, ".vagrant/"))
+
+	process([]string{"Vagrant"}, output)
+
+	assert.ThatString(output.String()).IsEqualTo(".vagrant/")
+}

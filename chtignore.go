@@ -18,20 +18,35 @@ func process(args []string, output io.Writer) {
 		log.Fatal("Mandatory argument missing: chtignore Java")
 	}
 
-	template := args[0]
-	if template == "" {
+	candidate := args[0]
+	if candidate == "" {
 		log.Fatal("Mandatory argument missing: chtignore Java")
 	}
 
-	resp, err := http.Get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore", template))
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Fprint(output, tryGetTemplate(candidate))
+}
+
+func tryGetTemplate(template string) string {
+	resp := get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore", template))
 	defer resp.Body.Close()
+
+	if resp.StatusCode == 404 {
+		resp = get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/Global/%s.gitignore", template))
+	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Fprint(output, string(body))
+
+	return string(body)
+}
+
+func get(url string) (resp *http.Response) {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return resp
 }
