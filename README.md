@@ -15,6 +15,7 @@ Clone the repository, then
 will output:
 
 ```
+# Java
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -28,6 +29,14 @@ will output:
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 ```
+
+Use multiple arguments to get templates at once:
+
+    chtignore Go JetBrains
+
+Use `list` to discover available templates:
+
+    chtignore list
 
 ## Build Status
 
