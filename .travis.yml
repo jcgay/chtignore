@@ -1,0 +1,9 @@
+language: go
+sudo: false
+
+go:
+  - tip
+
+install:
+  - go get github.com/jarcoal/httpmock
+  - go get github.com/assertgo/assert
