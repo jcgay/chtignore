@@ -9,18 +9,20 @@ import (
 	"os"
 )
 
+var logger = log.New(os.Stderr, "", 0)
+
 func main() {
 	process(os.Args[1:], os.Stdout)
 }
 
 func process(args []string, output io.Writer) {
 	if len(args) == 0 {
-		log.Fatal("Mandatory argument missing: chtignore Java")
+		missingArgument()
 	}
 
 	candidate := args[0]
 	if candidate == "" {
-		log.Fatal("Mandatory argument missing: chtignore Java")
+		missingArgument()
 	}
 
 	fmt.Fprint(output, tryGetTemplate(candidate))
@@ -36,7 +38,7 @@ func tryGetTemplate(template string) string {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	return string(body)
@@ -45,8 +47,12 @@ func tryGetTemplate(template string) string {
 func get(url string) (resp *http.Response) {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	return resp
+}
+
+func missingArgument() {
+	logger.Fatal("Mandatory argument missing, use: chtignore <template>")
 }
