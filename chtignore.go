@@ -37,6 +37,10 @@ func tryGetTemplate(template string) string {
 		resp = get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/Global/%s.gitignore", template))
 	}
 
+	if resp.StatusCode != 200 {
+		logger.Fatal("Cannot find a template for: ", template)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logger.Fatal(err)
