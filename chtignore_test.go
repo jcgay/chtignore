@@ -34,3 +34,16 @@ func TestGetUniqueGlobalTemplate(t *testing.T) {
 
 	assert.ThatString(output.String()).IsEqualTo(".vagrant/")
 }
+
+func TestTemplateStartWithUpperCase(t *testing.T) {
+	assert := assert.New(t)
+	output := new(bytes.Buffer)
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Java.gitignore",
+		httpmock.NewStringResponder(200, `*.class`))
+
+	process([]string{"java"}, output)
+
+	assert.ThatString(output.String()).IsEqualTo("*.class")
+}

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"unicode"
 )
 
 var logger = log.New(os.Stderr, "", 0)
@@ -25,7 +26,7 @@ func process(args []string, output io.Writer) {
 		missingArgument()
 	}
 
-	fmt.Fprint(output, tryGetTemplate(candidate))
+	fmt.Fprint(output, tryGetTemplate(upperFirstChar(candidate)))
 }
 
 func tryGetTemplate(template string) string {
@@ -55,4 +56,15 @@ func get(url string) (resp *http.Response) {
 
 func missingArgument() {
 	logger.Fatal("Mandatory argument missing, use: chtignore <template>")
+}
+
+func upperFirstChar(str string) string {
+	a := []rune(str)
+	firstChar := a[0]
+
+	if unicode.IsUpper(firstChar) {
+		return str
+	}
+	a[0] = unicode.ToUpper(firstChar)
+	return string(a)
 }
