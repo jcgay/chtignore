@@ -1,0 +1,14 @@
+{
+    "BuildConstraints": "linux,!arm,amd64 darwin,amd64 windows,amd64",
+    "PackageVersion": "0.1.0",
+    "PrereleaseInfo": "snapshot",
+    "ConfigVersion": "0.9",
+    "TaskSettings": {
+        "bintray": {
+            "package": "chtignore",
+            "subject": "jcgay",
+            "repository": "tools",
+            "downloadspage": "bintray.md"
+        }
+    }
+}
