@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/codegangsta/cli"
+	"github.com/jcgay/chtignore/Godeps/_workspace/src/github.com/codegangsta/cli"
 	"io"
 	"io/ioutil"
 	"log"

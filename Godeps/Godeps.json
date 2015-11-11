@@ -1,0 +1,20 @@
+{
+	"ImportPath": "github.com/jcgay/chtignore",
+	"GoVersion": "go1.5.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/assertgo/assert",
+			"Comment": "v2.0.0",
+			"Rev": "3806e087583b75bfd4e5808b74afc0248089d257"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-163-g70e3fa5",
+			"Rev": "70e3fa51ebed95df8c0fbe1519c1c1f9bc16bb13"
+		},
+		{
+			"ImportPath": "github.com/jarcoal/httpmock",
+			"Rev": "145b10d659265440f062c31ea15326166bae56ee"
+		}
+	]
+}

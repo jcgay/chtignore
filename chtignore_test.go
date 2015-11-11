@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/assertgo/assert"
-	"github.com/jarcoal/httpmock"
+	"github.com/jcgay/chtignore/Godeps/_workspace/src/github.com/assertgo/assert"
+	"github.com/jcgay/chtignore/Godeps/_workspace/src/github.com/jarcoal/httpmock"
 	"os"
 	"testing"
 )
