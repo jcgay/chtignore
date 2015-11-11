@@ -5,18 +5,28 @@ import (
 	"fmt"
 	"github.com/assertgo/assert"
 	"github.com/jarcoal/httpmock"
+	"os"
 	"testing"
 )
+
+func ExampleShowVersion() {
+	os.Args = []string{"chtignore", "-v"}
+
+	main()
+
+	// Output:
+	// chtignore version unknown-snapshot
+}
 
 func TestGetUniqueTemplate(t *testing.T) {
 	assert := assert.New(t)
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Java.gitignore",
+	httpmock.RegisterResponder("GET", templateUrl("Java.gitignore"),
 		httpmock.NewStringResponder(200, "*.class"))
 
-	process([]string{"Java"}, output)
+	app([]string{"chtignore", "Java"}, output)
 
 	assert.ThatString(output.String()).IsEqualTo(
 		`# Java
@@ -29,12 +39,12 @@ func TestGetUniqueGlobalTemplate(t *testing.T) {
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Vagrant.gitignore",
+	httpmock.RegisterResponder("GET", templateUrl("Vagrant.gitignore"),
 		httpmock.NewStringResponder(404, "Not Found"))
-	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Global/Vagrant.gitignore",
+	httpmock.RegisterResponder("GET", templateUrl("Global/Vagrant.gitignore"),
 		httpmock.NewStringResponder(200, ".vagrant/"))
 
-	process([]string{"Vagrant"}, output)
+	app([]string{"chtignore", "Vagrant"}, output)
 
 	assert.ThatString(output.String()).IsEqualTo(
 		`# Vagrant
@@ -47,10 +57,10 @@ func TestTemplateStartWithUpperCase(t *testing.T) {
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Java.gitignore",
+	httpmock.RegisterResponder("GET", templateUrl("Java.gitignore"),
 		httpmock.NewStringResponder(200, "*.class"))
 
-	process([]string{"java"}, output)
+	app([]string{"chtignore", "java"}, output)
 
 	assert.ThatString(output.String()).IsEqualTo(
 		`# Java
@@ -63,12 +73,12 @@ func TestGetMultipleTemplates(t *testing.T) {
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Java.gitignore",
+	httpmock.RegisterResponder("GET", templateUrl("Java.gitignore"),
 		httpmock.NewStringResponder(200, "*.class"))
-	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/master/Go.gitignore",
+	httpmock.RegisterResponder("GET", templateUrl("Go.gitignore"),
 		httpmock.NewStringResponder(200, "*.o"))
 
-	process([]string{"Java", "Go"}, output)
+	app([]string{"chtignore", "Java", "Go"}, output)
 
 	assert.ThatString(output.String()).IsEqualTo(
 		`# Java
@@ -140,16 +150,48 @@ func TestListAvailableTemplates(t *testing.T) {
 ]
 `))
 
-	process([]string{"list"}, output)
+	app([]string{"chtignore", "list"}, output)
 
 	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("Go, Java, Vagrant"))
+}
+
+func TestListTemplatesSortedByName(t *testing.T) {
+	assert := assert.New(t)
+	output := new(bytes.Buffer)
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("GET", "https://api.github.com/repos/github/gitignore/contents/",
+		httpmock.NewStringResponder(200, `[
+  {
+    "name": "c.gitignore"
+  },
+  {
+    "name": "a.gitignore"
+  }
+]
+`))
+	httpmock.RegisterResponder("GET", "https://api.github.com/repos/github/gitignore/contents/Global",
+		httpmock.NewStringResponder(200, `[
+  {
+    "name": "b.gitignore"
+  }
+]
+`))
+
+	app([]string{"chtignore", "list"}, output)
+
+	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("a, b, c"))
 }
 
 func TestDisplayVersion(t *testing.T) {
 	assert := assert.New(t)
 	output := new(bytes.Buffer)
 
-	process([]string{"-v"}, output)
+	app([]string{"chtignore", "--version"}, output)
 
-	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("chtignore unknown-snapshot"))
+	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("chtignore version unknown-snapshot"))
+}
+
+func templateUrl(template string) string {
+	return fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s", template)
 }

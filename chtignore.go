@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/codegangsta/cli"
 	"io"
 	"io/ioutil"
 	"log"
@@ -18,30 +19,48 @@ var VERSION = "unknown-snapshot"
 var logger = log.New(os.Stderr, "", 0)
 
 func main() {
-	process(os.Args[1:], os.Stdout)
+	app(os.Args, os.Stdout)
 }
 
-func process(args []string, output io.Writer) {
+func app(args []string, output io.Writer) {
+	app := cli.NewApp()
+	app.Name = "chtignore"
+	app.Usage = "print .gitignore templates in standard output"
+	app.ArgsUsage = "template"
+	app.Action = printTemplates
+	app.Version = VERSION
+	app.Commands = []cli.Command{
+		{
+			Name:   "list",
+			Usage:  "list available templates",
+			Action: list,
+		},
+	}
+	app.Writer = output
+	app.Run(args)
+}
+
+func printTemplates(c *cli.Context) {
+	args := c.Args()
+	output := c.App.Writer
+
 	if len(args) == 0 {
-		missingArgument()
+		cli.ShowAppHelp(c)
 	}
 
-	switch args[0] {
-	case "list":
-		fmt.Fprintln(output, listTemplates())
-	case "-v":
-		fmt.Fprintln(output, "chtignore", VERSION)
-	default:
-		for _, candidate := range args {
-			candidate = upperFirstChar(candidate)
-			content := tryGetTemplate(candidate)
+	for _, candidate := range args {
+		candidate = upperFirstChar(candidate)
+		content := tryGetTemplate(candidate)
 
-			if content != "" {
-				fmt.Fprintf(output, "# %s\n", candidate)
-				fmt.Fprintln(output, content)
-			}
+		if content != "" {
+			fmt.Fprintf(output, "# %s\n", candidate)
+			fmt.Fprintln(output, content)
 		}
 	}
+}
+
+func list(c *cli.Context) {
+	fmt.Fprintln(c.App.Writer, listTemplates())
 }
 
 func tryGetTemplate(template string) string {
@@ -71,10 +90,6 @@ func get(url string) (resp *http.Response) {
 	}
 
 	return resp
-}
-
-func missingArgument() {
-	logger.Fatal("Mandatory argument missing, use: chtignore <template>")
 }
 
 func upperFirstChar(str string) string {
@@ -110,24 +125,24 @@ func getAndAppend(templates []string, url string) []string {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 200 {
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logger.Fatal(err)
-		}
-
-		result := make([]GitIgnoreTemplate, 0)
-		if err := json.Unmarshal(body, &result); err != nil {
-			logger.Fatal(err)
-		}
-
-		for _, template := range result {
-			if template.Name != "" && strings.Contains(template.Name, ".gitignore") {
-				templates = append(templates, strings.Replace(template.Name, ".gitignore", "", 1))
-			}
-		}
-	} else {
+	if resp.StatusCode != 200 {
 		logger.Fatal("Cannot list templates: %s", resp.StatusCode)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	result := make([]GitIgnoreTemplate, 0)
+	if err := json.Unmarshal(body, &result); err != nil {
+		logger.Fatal(err)
+	}
+
+	for _, template := range result {
+		if template.Name != "" && strings.Contains(template.Name, ".gitignore") {
+			templates = append(templates, strings.Replace(template.Name, ".gitignore", "", 1))
+		}
 	}
 
 	return templates

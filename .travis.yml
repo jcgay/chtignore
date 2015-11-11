@@ -6,4 +6,5 @@ go:
 
 install:
   - go get github.com/jarcoal/httpmock
+  - go get github.com/codegangsta/cli
   - go get github.com/assertgo/assert
