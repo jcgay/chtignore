@@ -142,5 +142,14 @@ func TestListAvailableTemplates(t *testing.T) {
 
 	process([]string{"list"}, output)
 
-	assert.ThatString(output.String()).IsEqualTo(fmt.Sprint("Go, Java, Vagrant\n"))
+	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("Go, Java, Vagrant"))
+}
+
+func TestDisplayVersion(t *testing.T) {
+	assert := assert.New(t)
+	output := new(bytes.Buffer)
+
+	process([]string{"-v"}, output)
+
+	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("chtignore unknown-snapshot"))
 }

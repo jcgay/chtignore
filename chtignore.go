@@ -13,6 +13,8 @@ import (
 	"unicode"
 )
 
+var VERSION = "unknown-snapshot"
+
 var logger = log.New(os.Stderr, "", 0)
 
 func main() {
@@ -24,9 +26,12 @@ func process(args []string, output io.Writer) {
 		missingArgument()
 	}
 
-	if args[0] == "list" {
+	switch args[0] {
+	case "list":
 		fmt.Fprintln(output, listTemplates())
-	} else {
+	case "-v":
+		fmt.Fprintln(output, "chtignore", VERSION)
+	default:
 		for _, candidate := range args {
 			candidate = upperFirstChar(candidate)
 			content := tryGetTemplate(candidate)
