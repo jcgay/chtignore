@@ -80,12 +80,9 @@ func TestGetMultipleTemplates(t *testing.T) {
 
 	app([]string{"chtignore", "Java", "Go"}, output)
 
-	assert.ThatString(output.String()).IsEqualTo(
-		`# Java
-*.class
-# Go
-*.o
-`)
+	assert.ThatString(output.String()).
+		Contains(fmt.Sprintln("# Java\n*.class")).
+		Contains(fmt.Sprintln("# Go\n*.o"))
 }
 
 func TestListAvailableTemplates(t *testing.T) {

@@ -44,16 +44,27 @@ func printTemplates(c *cli.Context) {
 	args := c.Args()
 	output := c.App.Writer
 
-	if len(args) == 0 {
+	length := len(args)
+	if length == 0 {
 		cli.ShowAppHelp(c)
 	}
 
+	contents := make(chan string, length)
 	for _, candidate := range args {
-		candidate = upperFirstChar(candidate)
-		content := tryGetTemplate(candidate)
+		go func(candidate string) {
+			candidate = upperFirstChar(candidate)
+			content := tryGetTemplate(candidate)
 
-		if content != "" {
-			fmt.Fprintf(output, "# %s\n", candidate)
+			if content != "" {
+				contents <- fmt.Sprintf("# %s\n%s", candidate, content)
+			} else {
+				contents <- ""
+			}
+		}(candidate)
+	}
+
+	for i := 0; i < length; i++ {
+		if content := <-contents; content != "" {
 			fmt.Fprintln(output, content)
 		}
 	}
@@ -67,11 +78,11 @@ func tryGetTemplate(template string) string {
 	resp := get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore", template))
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 404 {
+	if resp.StatusCode == http.StatusNotFound {
 		resp = get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/Global/%s.gitignore", template))
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		logger.Fatal("Cannot find a template for: ", template)
 	}
 
@@ -125,7 +136,7 @@ func getAndAppend(templates []string, url string) []string {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		logger.Fatal("Cannot list templates: %s", resp.StatusCode)
 	}
 
