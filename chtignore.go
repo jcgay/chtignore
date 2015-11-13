@@ -137,7 +137,7 @@ func getAndAppend(templates []string, url string) []string {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		logger.Fatal("Cannot list templates: %s", resp.StatusCode)
+		logger.Fatal("Cannot list templates: ", resp.StatusCode)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
