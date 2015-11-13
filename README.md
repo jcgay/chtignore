@@ -4,7 +4,22 @@ Print `.gitignore` template from [https://github.com/github/gitignore](https://g
 
 ## Installation
 
-Clone the repository, then
+### Binaries
+
+#### Darwin (Apple Mac)
+
+ * [chtignore\_1.0.0\_darwin\_amd64.zip](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_darwin_amd64.zip?direct)
+
+#### Linux
+
+ * [chtignore\_1.0.0\_amd64.deb](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_amd64.deb?direct)
+ * [chtignore\_1.0.0\_linux\_amd64.tar.gz](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_linux_amd64.tar.gz?direct)
+
+#### MS Windows
+
+ * [chtignore\_1.0.0\_windows\_amd64.zip](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_windows_amd64.zip?direct)
+
+### From source, clone the repository, then
 
     go install
     
@@ -30,7 +45,7 @@ will output:
 hs_err_pid*
 ```
 
-Use multiple arguments to get templates at once:
+Use multiple arguments to get separate templates at once:
 
     chtignore Go JetBrains
 
@@ -42,13 +57,13 @@ Use `list` to discover available templates:
 
 ### Status
 
-[![Build Status](https://travis-ci.org/jcgay/chtignore.svg)](https://travis-ci.org/jcgay/chtignore)
+[![Build Status](https://travis-ci.org/jcgay/chtignore.svg?branch=master)](https://travis-ci.org/jcgay/chtignore)
 
 ### Release
 
 - Configure Bintray deployment in `.goxc.local.json`:
 
-```
+```json
 {
     "ConfigVersion": "0.9",
     "TaskSettings": {

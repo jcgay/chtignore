@@ -1,7 +1,7 @@
 {
     "BuildConstraints": "linux,!arm,amd64 darwin,amd64 windows,amd64",
-    "PackageVersion": "0.1.0",
-    "PrereleaseInfo": "snapshot",
+    "PackageVersion": "1.0.0",
+    "PrereleaseInfo": "",
     "ConfigVersion": "0.9",
     "TaskSettings": {
         "bintray": {
