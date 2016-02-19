@@ -149,7 +149,7 @@ func TestListAvailableTemplates(t *testing.T) {
 
 	app([]string{"chtignore", "list"}, output)
 
-	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("Go, Java, Vagrant"))
+	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("Go, Java, JetBrains-build, Vagrant"))
 }
 
 func TestListTemplatesSortedByName(t *testing.T) {
@@ -160,24 +160,24 @@ func TestListTemplatesSortedByName(t *testing.T) {
 	httpmock.RegisterResponder("GET", "https://api.github.com/repos/github/gitignore/contents/",
 		httpmock.NewStringResponder(200, `[
   {
-    "name": "c.gitignore"
+    "name": "C.gitignore"
   },
   {
-    "name": "a.gitignore"
+    "name": "A.gitignore"
   }
 ]
 `))
 	httpmock.RegisterResponder("GET", "https://api.github.com/repos/github/gitignore/contents/Global",
 		httpmock.NewStringResponder(200, `[
   {
-    "name": "b.gitignore"
+    "name": "B.gitignore"
   }
 ]
 `))
 
 	app([]string{"chtignore", "list"}, output)
 
-	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("a, b, c"))
+	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("A, B, C, JetBrains-build"))
 }
 
 func TestDisplayVersion(t *testing.T) {
@@ -187,6 +187,22 @@ func TestDisplayVersion(t *testing.T) {
 	app([]string{"chtignore", "--version"}, output)
 
 	assert.ThatString(output.String()).IsEqualTo(fmt.Sprintln("chtignore version unknown-snapshot"))
+}
+
+func TestGetJetBrainsBuildTemplate(t *testing.T) {
+	assert := assert.New(t)
+	output := new(bytes.Buffer)
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("GET", "https://raw.githubusercontent.com/github/gitignore/38d6cac990a82a1f7814571634e08295086763b5/Global/JetBrains.gitignore",
+		httpmock.NewStringResponder(200, ".idea"))
+
+	app([]string{"chtignore", "JetBrains-build"}, output)
+
+	assert.ThatString(output.String()).IsEqualTo(
+		`# JetBrains-build
+.idea
+`)
 }
 
 func templateUrl(template string) string {

@@ -75,7 +75,13 @@ func list(c *cli.Context) {
 }
 
 func tryGetTemplate(template string) string {
-	resp := get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore", template))
+	var resp *http.Response
+
+	if template == "JetBrains-build" {
+		resp = get("https://raw.githubusercontent.com/github/gitignore/38d6cac990a82a1f7814571634e08295086763b5/Global/JetBrains.gitignore")
+	} else {
+		resp = get(fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore", template))
+	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
@@ -118,6 +124,7 @@ func listTemplates() string {
 	templates := make([]string, 0)
 	templates = getAndAppend(templates, "https://api.github.com/repos/github/gitignore/contents/")
 	templates = getAndAppend(templates, "https://api.github.com/repos/github/gitignore/contents/Global")
+	templates = append(templates, "JetBrains-build")
 	sort.Strings(templates)
 	return strings.Join(templates, ", ")
 }
