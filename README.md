@@ -8,16 +8,16 @@ Print `.gitignore` template from [https://github.com/github/gitignore](https://g
 
 #### Darwin (Apple Mac)
 
- * [chtignore\_1.0.0\_darwin\_amd64.zip](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_darwin_amd64.zip?direct)
+ * [chtignore\_1.1.0\_darwin\_amd64.zip](chtignore_1.1.0_darwin_amd64.zip)
 
 #### Linux
 
- * [chtignore\_1.0.0\_amd64.deb](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_amd64.deb?direct)
- * [chtignore\_1.0.0\_linux\_amd64.tar.gz](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_linux_amd64.tar.gz?direct)
+ * [chtignore\_1.1.0\_amd64.deb](chtignore_1.1.0_amd64.deb)
+ * [chtignore\_1.1.0\_linux\_amd64.tar.gz](chtignore_1.1.0_linux_amd64.tar.gz)
 
 #### MS Windows
 
- * [chtignore\_1.0.0\_windows\_amd64.zip](https://dl.bintray.com//content/jcgay/tools/chtignore_1.0.0_windows_amd64.zip?direct)
+ * [chtignore\_1.1.0\_windows\_amd64.zip](chtignore_1.1.0_windows_amd64.zip)
 
 ### From source, clone the repository, then
 
