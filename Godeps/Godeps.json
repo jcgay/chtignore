@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/jcgay/chtignore",
-	"GoVersion": "go1.5.1",
+	"GoVersion": "go1.6",
 	"Deps": [
 		{
 			"ImportPath": "github.com/assertgo/assert",
