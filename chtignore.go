@@ -11,6 +11,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
 	"unicode"
 )
 
@@ -44,29 +45,31 @@ func printTemplates(c *cli.Context) {
 	args := c.Args()
 	output := c.App.Writer
 
-	length := len(args)
-	if length == 0 {
+	if len(args) == 0 {
 		cli.ShowAppHelp(c)
 	}
 
-	contents := make(chan string, length)
+	var wg sync.WaitGroup
+	contents := make(chan string)
 	for _, candidate := range args {
+		wg.Add(1)
 		go func(candidate string) {
+			defer wg.Done()
 			candidate = upperFirstChar(candidate)
 			content := tryGetTemplate(candidate)
 
 			if content != "" {
 				contents <- fmt.Sprintf("# %s\n%s", candidate, content)
-			} else {
-				contents <- ""
 			}
 		}(candidate)
 	}
+	go func() {
+		wg.Wait()
+		close(contents)
+	}()
 
-	for i := 0; i < length; i++ {
-		if content := <-contents; content != "" {
-			fmt.Fprintln(output, content)
-		}
+	for content := range contents {
+		fmt.Fprintln(output, content)
 	}
 }
 
