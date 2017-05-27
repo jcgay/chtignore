@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func ExampleShowVersion() {
+func Example() {
 	os.Args = []string{"chtignore", "-v"}
 
 	main()
@@ -23,7 +23,7 @@ func TestGetUniqueTemplate(t *testing.T) {
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", templateUrl("Java.gitignore"),
+	httpmock.RegisterResponder("GET", templateURL("Java.gitignore"),
 		httpmock.NewStringResponder(200, "*.class"))
 
 	app([]string{"chtignore", "Java"}, output)
@@ -39,9 +39,9 @@ func TestGetUniqueGlobalTemplate(t *testing.T) {
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", templateUrl("Vagrant.gitignore"),
+	httpmock.RegisterResponder("GET", templateURL("Vagrant.gitignore"),
 		httpmock.NewStringResponder(404, "Not Found"))
-	httpmock.RegisterResponder("GET", templateUrl("Global/Vagrant.gitignore"),
+	httpmock.RegisterResponder("GET", templateURL("Global/Vagrant.gitignore"),
 		httpmock.NewStringResponder(200, ".vagrant/"))
 
 	app([]string{"chtignore", "Vagrant"}, output)
@@ -57,7 +57,7 @@ func TestTemplateStartWithUpperCase(t *testing.T) {
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", templateUrl("Java.gitignore"),
+	httpmock.RegisterResponder("GET", templateURL("Java.gitignore"),
 		httpmock.NewStringResponder(200, "*.class"))
 
 	app([]string{"chtignore", "java"}, output)
@@ -73,9 +73,9 @@ func TestGetMultipleTemplates(t *testing.T) {
 	output := new(bytes.Buffer)
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", templateUrl("Java.gitignore"),
+	httpmock.RegisterResponder("GET", templateURL("Java.gitignore"),
 		httpmock.NewStringResponder(200, "*.class"))
-	httpmock.RegisterResponder("GET", templateUrl("Go.gitignore"),
+	httpmock.RegisterResponder("GET", templateURL("Go.gitignore"),
 		httpmock.NewStringResponder(200, "*.o"))
 
 	app([]string{"chtignore", "Java", "Go"}, output)
@@ -205,6 +205,6 @@ func TestGetJetBrainsBuildTemplate(t *testing.T) {
 `)
 }
 
-func templateUrl(template string) string {
+func templateURL(template string) string {
 	return fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s", template)
 }

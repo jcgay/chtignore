@@ -58,6 +58,7 @@ Use `list` to discover available templates:
 ### Status
 
 [![Build Status](https://travis-ci.org/jcgay/chtignore.svg?branch=master)](https://travis-ci.org/jcgay/chtignore)
+[![Code Report](https://goreportcard.com/badge/github.com/jcgay/chtignore)](https://goreportcard.com/report/github.com/jcgay/chtignore)
 
 ### Release
 

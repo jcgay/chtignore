@@ -15,6 +15,7 @@ import (
 	"unicode"
 )
 
+// VERSION injected at compile time by goxc (see https://github.com/laher/goxc/wiki/versioning#version-number-interpolation)
 var VERSION = "unknown-snapshot"
 
 var logger = log.New(os.Stderr, "", 0)
@@ -155,7 +156,7 @@ func getAndAppend(templates []string, url string) []string {
 		logger.Fatal(err)
 	}
 
-	result := make([]GitIgnoreTemplate, 0)
+	result := make([]gitIgnoreTemplate, 0)
 	if err := json.Unmarshal(body, &result); err != nil {
 		logger.Fatal(err)
 	}
@@ -169,6 +170,6 @@ func getAndAppend(templates []string, url string) []string {
 	return templates
 }
 
-type GitIgnoreTemplate struct {
+type gitIgnoreTemplate struct {
 	Name string `json:"name"`
 }
